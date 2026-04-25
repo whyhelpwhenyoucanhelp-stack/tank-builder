@@ -2,28 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>WW2 Tank Workshop</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪖</text></svg>">
 <style>
+* { box-sizing: border-box; }
+
 body {
   margin: 0; overflow: hidden;
   font-family: 'Segoe UI', Arial, sans-serif;
   background: #0a0a0a;
+  height: 100vh; width: 100vw;
 }
 
+/* ========== START MENU ========== */
 #startMenu {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   z-index: 100; overflow: hidden;
 }
 
-.menu-slider { display: flex; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); width: 90%; max-width: 500px; }
-.menu-slide { min-width: 100%; opacity: 0; transform: scale(0.9); transition: all 0.5s ease; }
+.menu-slider {
+  display: flex; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  width: 90%; max-width: 500px;
+}
+
+.menu-slide {
+  min-width: 100%; opacity: 0; transform: scale(0.9);
+  transition: all 0.5s ease;
+}
+
 .menu-slide.active { opacity: 1; transform: scale(1); }
 .menu-content { text-align: center; color: white; padding: 20px; }
-.logo-tank { font-size: 60px; animation: float 3s ease-in-out infinite; }
+.logo-tank { font-size: clamp(40px, 10vw, 60px); animation: float 3s ease-in-out infinite; }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -31,7 +43,7 @@ body {
 }
 
 .title-glow {
-  font-size: 40px; font-weight: 900; letter-spacing: 4px; line-height: 1.1;
+  font-size: clamp(28px, 7vw, 40px); font-weight: 900; letter-spacing: 4px; line-height: 1.1;
   text-shadow: 0 0 20px rgba(255,100,50,0.8), 0 0 40px rgba(255,60,20,0.6);
   animation: glowPulse 2s ease-in-out infinite;
 }
@@ -42,12 +54,12 @@ body {
 }
 
 .divider { width: 80px; height: 3px; background: linear-gradient(90deg, transparent, #e63946, transparent); margin: 16px auto; border-radius: 2px; }
-.credit { font-size: 18px; margin: 6px 0; color: #ddd; }
+.credit { font-size: clamp(14px, 3vw, 18px); margin: 6px 0; color: #ddd; }
 .credit span { color: #e63946; font-weight: bold; }
-.assist { font-size: 13px; margin: 4px 0; color: #aaa; }
+.assist { font-size: clamp(11px, 2.5vw, 13px); margin: 4px 0; color: #aaa; }
 .assist span { color: #ff6b6b; }
 .tagline { font-size: 11px; color: #666; margin-top: 8px; font-style: italic; letter-spacing: 2px; }
-.menu-content h2 { font-size: 28px; color: #e63946; letter-spacing: 3px; margin-bottom: 20px; }
+.menu-content h2 { font-size: clamp(22px, 5vw, 28px); color: #e63946; letter-spacing: 3px; margin-bottom: 20px; }
 .controls-list { text-align: left; max-width: 320px; margin: 0 auto; }
 
 .control-item {
@@ -55,21 +67,28 @@ body {
   padding: 10px 14px; background: rgba(255,255,255,0.05);
   border-radius: 8px; margin-bottom: 8px;
   border: 1px solid rgba(255,255,255,0.08); color: #ddd;
+  font-size: clamp(12px, 2.5vw, 14px);
 }
 
 .key-icon { font-size: 22px; }
 
 .enter-btn, .music-btn {
-  margin-top: 12px; padding: 12px 36px; font-size: 16px;
+  margin-top: 12px; padding: clamp(10px, 2vw, 14px) clamp(30px, 8vw, 40px);
+  font-size: clamp(14px, 3vw, 16px);
   background: linear-gradient(135deg, #8b0000, #b22222);
   color: white; border: 2px solid #ff4444; border-radius: 6px;
   cursor: pointer; letter-spacing: 2px; font-weight: bold; transition: all 0.3s;
-  width: auto;
+  width: auto; min-width: 200px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .enter-btn:hover, .music-btn:hover {
   background: linear-gradient(135deg, #a00000, #cc3333);
   box-shadow: 0 0 30px rgba(255,50,50,0.6); transform: scale(1.05);
+}
+
+.enter-btn:active, .music-btn:active {
+  transform: scale(0.95);
 }
 
 .pulse { animation: btnPulse 2s infinite; }
@@ -80,11 +99,17 @@ body {
 }
 
 .nav-arrows { display: flex; align-items: center; gap: 20px; margin-top: 30px; }
+
 .nav-arrow {
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-  color: white; font-size: 20px; padding: 10px 18px; border-radius: 50%; cursor: pointer; transition: all 0.3s;
+  color: white; font-size: clamp(16px, 3vw, 20px);
+  padding: clamp(8px, 2vw, 10px) clamp(14px, 3vw, 18px);
+  border-radius: 50%; cursor: pointer; transition: all 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
+
 .nav-arrow:hover { background: rgba(230,57,70,0.5); border-color: #e63946; box-shadow: 0 0 15px rgba(230,57,70,0.5); }
+.nav-arrow:active { background: rgba(230,57,70,0.7); }
 .slide-dots { display: flex; gap: 10px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s; }
 .dot.active { background: #e63946; box-shadow: 0 0 10px #e63946; width: 28px; border-radius: 10px; }
@@ -101,38 +126,93 @@ body {
   100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
 }
 
+/* ========== MAIN UI (SCROLLABLE) ========== */
 #ui {
-  position: absolute; top: 10px; left: 10px;
+  position: fixed; top: 10px; left: 10px;
   background: rgba(0,0,0,0.85); color: white;
-  padding: 14px; width: 280px; border-radius: 10px;
-  z-index: 10; display: none;
+  padding: 14px; width: clamp(260px, 30vw, 300px);
+  border-radius: 10px; z-index: 10; display: none;
   border: 1px solid rgba(255,255,255,0.15);
-  max-height: 95vh; overflow-y: auto;
+  max-height: 95vh;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
-#ui h2 { margin: 0 0 10px 0; font-size: 15px; letter-spacing: 1px; color: #ff6b6b; }
-select { width: 100%; margin-bottom: 6px; padding: 5px; background: #1a1a1a; color: white; border: 1px solid #444; border-radius: 4px; font-size: 12px; font-family: inherit; }
-label { font-size: 11px; color: #aaa; display: block; margin-top: 4px; margin-bottom: 2px; }
+/* Custom scrollbar */
+#ui::-webkit-scrollbar { width: 6px; }
+#ui::-webkit-scrollbar-track { background: transparent; }
+#ui::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
-#stats, #hoi4stats { font-size: 11px; line-height: 1.4; color: #ddd; }
+#ui h2 { margin: 0 0 10px 0; font-size: clamp(13px, 2.5vw, 15px); letter-spacing: 1px; color: #ff6b6b; }
+
+select {
+  width: 100%; margin-bottom: 6px; padding: clamp(6px, 1.5vw, 8px);
+  background: #1a1a1a; color: white; border: 1px solid #444;
+  border-radius: 4px; font-size: clamp(11px, 2vw, 13px);
+  font-family: inherit; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+
+label {
+  font-size: clamp(10px, 1.8vw, 11px); color: #aaa;
+  display: block; margin-top: 6px; margin-bottom: 2px;
+}
+
+#stats, #hoi4stats {
+  font-size: clamp(10px, 1.8vw, 11px); line-height: 1.5; color: #ddd;
+}
+
 #hoi4stats { color: #ffcc00; }
 
-#createTank { width: 100%; margin-top: 8px; }
-
-#specSheet {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.95); color: white; padding: 24px;
-  border-radius: 12px; z-index: 200; max-width: 400px; max-height: 80vh; overflow-y: auto;
-  border: 2px solid #e63946;
+#createTank {
+  width: 100%; margin-top: 8px;
+  padding: 10px; font-size: clamp(12px, 2.5vw, 14px);
 }
-#specContent { font-size: 13px; line-height: 1.5; }
-#specContent h3 { color: #ff6b6b; margin-bottom: 8px; }
+
+/* ========== SPEC SHEET MODAL ========== */
+#specSheet {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.95); color: white; padding: 20px;
+  border-radius: 12px; z-index: 200;
+  width: clamp(280px, 85vw, 400px);
+  max-height: 80vh; overflow-y: auto;
+  border: 2px solid #e63946;
+  -webkit-overflow-scrolling: touch;
+}
+
+#specSheet::-webkit-scrollbar { width: 4px; }
+#specSheet::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
+
+#specContent { font-size: clamp(11px, 2vw, 13px); line-height: 1.6; }
+#specContent h3 { color: #ff6b6b; margin-bottom: 8px; font-size: clamp(14px, 3vw, 16px); }
+
+#specSheet button {
+  margin-top: 12px; padding: 8px 20px;
+  background: #b33a2e; color: white; border: none;
+  border-radius: 4px; cursor: pointer; font-size: clamp(12px, 2.5vw, 14px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ========== MOBILE ADJUSTMENTS ========== */
+@media (max-width: 600px) {
+  #ui {
+    top: 5px; left: 5px;
+    width: 260px;
+    max-height: 90vh;
+    padding: 10px;
+  }
+  
+  .nav-arrows { gap: 12px; }
+  .slide-dots { gap: 8px; }
+}
 </style>
 </head>
 <body>
 
 <iframe id="bgMusic" style="display:none" allow="autoplay"></iframe>
 
+<!-- START MENU -->
 <div id="startMenu">
   <div class="menu-slider" id="menuSlider">
     <div class="menu-slide active" data-slide="0">
@@ -176,6 +256,7 @@ label { font-size: 11px; color: #aaa; display: block; margin-top: 4px; margin-bo
   <div class="particles" id="particles"></div>
 </div>
 
+<!-- MAIN UI -->
 <div id="ui">
   <h2>🪖 WW2 TANK WORKSHOP</h2>
   <label>🚛 CHASSIS</label>
@@ -272,13 +353,16 @@ label { font-size: 11px; color: #aaa; display: block; margin-top: 4px; margin-bo
   <button id="createTank" class="enter-btn" onclick="createTank()">📋 CREATE TANK</button>
 </div>
 
+<!-- SPEC SHEET MODAL -->
 <div id="specSheet" style="display:none;">
   <div id="specContent"></div>
-  <button onclick="document.getElementById('specSheet').style.display='none'" style="margin-top:10px; padding:8px 20px; background:#b33a2e; color:white; border:none; border-radius:4px; cursor:pointer;">CLOSE</button>
+  <button onclick="document.getElementById('specSheet').style.display='none'">CLOSE</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js">
+</script>
 <script>
 // ========== TANK MODEL ==========
 const tankURL = "https://whyhelpwhenyoucanhelp-stack.github.io/tank-models-br/Tank.glb";
@@ -357,6 +441,7 @@ const materialMods = {
   composite:{armorMul:1.5,weightMul:1.1,costMul:3.0,name:"Composite Prototype"}
 };
 
+// ========== MUSIC ==========
 const musicFrame = document.getElementById('bgMusic');
 musicFrame.src = "https://www.youtube.com/embed/5AsV9UvLd5E?autoplay=1&loop=1&playlist=5AsV9UvLd5E";
 let musicPlaying = true;
@@ -365,20 +450,46 @@ document.getElementById('toggleMusic').addEventListener('click', () => {
   musicFrame.src = musicPlaying ? "https://www.youtube.com/embed/5AsV9UvLd5E?autoplay=1&loop=1&playlist=5AsV9UvLd5E" : "";
 });
 
+// ========== START MENU ==========
 let currentSlide = 0;
 const slides = document.querySelectorAll('.menu-slide');
 const dots = document.querySelectorAll('.dot');
 const slider = document.getElementById('menuSlider');
+
 function goToSlide(i) {
   currentSlide = i;
   slider.style.transform = `translateX(-${i * 100}%)`;
   slides.forEach((s, j) => s.classList.toggle('active', j === i));
   dots.forEach((d, j) => d.classList.toggle('active', j === i));
 }
-document.getElementById('prevSlide').addEventListener('click', () => { if (currentSlide > 0) goToSlide(currentSlide - 1); });
-document.getElementById('nextSlide').addEventListener('click', () => { if (currentSlide < 2) goToSlide(currentSlide + 1); });
-dots.forEach(d => d.addEventListener('click', () => goToSlide(parseInt(d.dataset.index))));
 
+document.getElementById('prevSlide').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentSlide > 0) goToSlide(currentSlide - 1);
+});
+document.getElementById('nextSlide').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentSlide < 2) goToSlide(currentSlide + 1);
+});
+dots.forEach(d => d.addEventListener('click', (e) => {
+  e.stopPropagation();
+  goToSlide(parseInt(d.dataset.index));
+}));
+
+// Mobile swipe for menu
+let touchStartX = 0;
+document.getElementById('startMenu').addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+});
+document.getElementById('startMenu').addEventListener('touchend', (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0 && currentSlide < 2) goToSlide(currentSlide + 1);
+    if (diff < 0 && currentSlide > 0) goToSlide(currentSlide - 1);
+  }
+});
+
+// Particles
 const pc = document.getElementById('particles');
 for (let i = 0; i < 50; i++) {
   const p = document.createElement('div'); p.classList.add('particle');
@@ -388,10 +499,12 @@ for (let i = 0; i < 50; i++) {
   pc.appendChild(p);
 }
 
+// Launch button
 document.getElementById('startButton').addEventListener('click', () => {
   document.getElementById('startMenu').style.display = 'none';
   document.getElementById('ui').style.display = 'block';
 });
+
 document.addEventListener('keydown', (e) => {
   if (document.getElementById('startMenu').style.display !== 'none') {
     if (e.key === 'ArrowRight' && currentSlide < 2) goToSlide(currentSlide + 1);
@@ -399,6 +512,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// ========== INIT 3D ==========
 init();
 animate();
 updateAll();
@@ -410,40 +524,106 @@ function init() {
   camera.position.set(0, 2, zoom);
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.domElement.style.position = 'fixed';
+  renderer.domElement.style.top = '0';
+  renderer.domElement.style.left = '0';
+  renderer.domElement.style.zIndex = '1';
   document.body.appendChild(renderer.domElement);
+
   scene.add(new THREE.AmbientLight(0xffffff, 1.8));
   const l1 = new THREE.DirectionalLight(0xffffff, 1.5); l1.position.set(5, 10, 5); scene.add(l1);
   const l2 = new THREE.DirectionalLight(0xffaa88, 0.8); l2.position.set(-3, 2, -2); scene.add(l2);
   scene.add(new THREE.GridHelper(10, 20, 0x333333, 0x222222));
+
   const loader = new THREE.GLTFLoader();
   loader.load(tankURL,
     (gltf) => {
       tank = gltf.scene;
       const box = new THREE.Box3().setFromObject(tank);
       const size = box.getSize(new THREE.Vector3());
-      tank.scale.set(4 / Math.max(size.x, size.y, size.z), 4 / Math.max(size.x, size.y, size.z), 4 / Math.max(size.x, size.y, size.z));
+      const s = 4 / Math.max(size.x, size.y, size.z);
+      tank.scale.set(s, s, s);
       tank.position.set(0, 0, 0);
       scene.add(tank);
     },
-    (p) => { if (p.total) console.log("Loading:", Math.round(p.loaded / p.total * 100) + "%"); },
+    null,
     () => {
       const g = new THREE.Group();
-      const h = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.8, 4), new THREE.MeshStandardMaterial({ color: 0x4a5d23 })); h.position.y = 0.5; g.add(h);
-      const t = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1, 0.6, 8), new THREE.MeshStandardMaterial({ color: 0x3a4d18 })); t.position.set(0, 1.1, -0.3); g.add(t);
+      const h = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.8, 4), new THREE.MeshStandardMaterial({ color: 0x4a5d23 }));
+      h.position.y = 0.5; g.add(h);
+      const t = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1, 0.6, 8), new THREE.MeshStandardMaterial({ color: 0x3a4d18 }));
+      t.position.set(0, 1.1, -0.3); g.add(t);
       tank = g; scene.add(tank);
     }
   );
-  document.addEventListener("mousedown", () => dragging = true);
+
+  // Mouse rotation
+  document.addEventListener("mousedown", (e) => {
+    if (e.target === renderer.domElement || e.target.tagName === 'CANVAS') {
+      dragging = true;
+    }
+  });
   document.addEventListener("mouseup", () => dragging = false);
   document.addEventListener("mousemove", (e) => {
-    if (dragging && tank) { rotY += (e.clientX - lastX) * 0.005; rotX += (e.clientY - lastY) * 0.005; }
+    if (dragging && tank) {
+      rotY += (e.clientX - lastX) * 0.005;
+      rotX += (e.clientY - lastY) * 0.005;
+    }
     lastX = e.clientX; lastY = e.clientY;
   });
+
+  // Touch rotation
+  document.addEventListener("touchstart", (e) => {
+    if (e.target === renderer.domElement || e.target.tagName === 'CANVAS') {
+      dragging = true;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }
+  }, { passive: false });
+  document.addEventListener("touchend", () => dragging = false);
+  document.addEventListener("touchmove", (e) => {
+    if (dragging && tank) {
+      rotY += (e.touches[0].clientX - lastX) * 0.005;
+      rotX += (e.touches[0].clientY - lastY) * 0.005;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }
+  }, { passive: false });
+
+  // Zoom
   document.addEventListener("keydown", (e) => {
     if (e.key === "PageUp") { zoom = Math.max(4, zoom - 1); camera.position.z = zoom; }
     if (e.key === "PageDown") { zoom = Math.min(30, zoom + 1); camera.position.z = zoom; }
   });
-  window.addEventListener("resize", () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+
+  // Pinch zoom for mobile
+  let pinchStart = 0;
+  document.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+      pinchStart = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  });
+  document.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+      const pinchNow = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      zoom += (pinchStart - pinchNow) * 0.02;
+      zoom = Math.max(4, Math.min(30, zoom));
+      camera.position.z = zoom;
+      pinchStart = pinchNow;
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
 }
 
 function animate() {
@@ -465,19 +645,31 @@ function updateAll() {
   const f = fuelMods[getVal("fuel")];
   const a = armorAddonMods[getVal("armorAddon")];
   const m = materialMods[getVal("material")];
-  let armor = (c.armor + t.armor + a.armor) * m.armorMul;
-  let speed = c.speed + t.speed + p.speed + e.speed + f.speed + a.speed;
-  let weight = (c.weight + t.weight + p.weight + s1.weight + s2.weight + s3.weight + a.weight) * m.weightMul;
+
+  let armor = Math.round((c.armor + t.armor + a.armor) * m.armorMul);
+  let speed = Math.max(5, Math.round(c.speed + t.speed + p.speed + e.speed + f.speed + a.speed));
+  let weight = ((c.weight + t.weight + p.weight + s1.weight + s2.weight + s3.weight + a.weight) * m.weightMul).toFixed(1);
   let cost = Math.round((c.cost + t.cost + p.cost + s1.cost + s2.cost + s3.cost + e.cost + f.cost + a.cost) * m.costMul);
-  let reliability = c.reliability + e.reliability + f.reliability;
+  let reliability = Math.max(0, Math.min(100, c.reliability + e.reliability + f.reliability));
   let firepower = p.firepower + s1.firepower + s2.firepower + s3.firepower;
-  let penetration = p.pen;
-  speed = Math.max(5, Math.round(speed));
-  armor = Math.round(armor);
-  weight = weight.toFixed(1);
-  reliability = Math.max(0, Math.min(100, reliability));
-  document.getElementById("stats").innerHTML = `🛡️ Armor: ${armor}<br>🚜 Speed: ${speed} km/h<br>🔥 Firepower: ${firepower}<br>🎯 Penetration: ${penetration}mm<br>⚖️ Weight: ${weight} tons<br>🏭 Cost: ${cost} points<br>🔧 Reliability: ${reliability}%`;
-  document.getElementById("hoi4stats").innerHTML = `🧭 Stability: ${Math.max(20, 70 - Math.floor(weight/5))}%<br>⛽ Range: ${Math.max(50, 300 - Math.floor(weight*2))} km<br>🔥 Fire Chance: ${getVal("fuel") === "gasoline" ? "High" : getVal("fuel") === "aviation" ? "Very High" : getVal("fuel") === "diesel" ? "Low" : "None"}<br>🎯 Accuracy: ${getVal("turret") === "none" ? "Low (Fixed)" : "Normal"}<br>🔄 Turret Rotation: ${getVal("turret") === "none" ? "None" : getVal("turret") === "aa" ? "360° Fast" : "360°"}`;
+
+  document.getElementById("stats").innerHTML = `
+    🛡️ Armor: ${armor}<br>
+    🚜 Speed: ${speed} km/h<br>
+    🔥 Firepower: ${firepower}<br>
+    🎯 Penetration: ${p.pen}mm<br>
+    ⚖️ Weight: ${weight} tons<br>
+    🏭 Cost: ${cost} points<br>
+    🔧 Reliability: ${reliability}%
+  `;
+
+  document.getElementById("hoi4stats").innerHTML = `
+    🧭 Stability: ${Math.max(20, 70 - Math.floor(weight/5))}%<br>
+    ⛽ Range: ${Math.max(50, 300 - Math.floor(weight*2))} km<br>
+    🔥 Fire Chance: ${getVal("fuel")==="gasoline"?"High":getVal("fuel")==="aviation"?"Very High":getVal("fuel")==="diesel"?"Low":"None"}<br>
+    🎯 Accuracy: ${getVal("turret")==="none"?"Low (Fixed)":"Normal"}<br>
+    🔄 Turret: ${getVal("turret")==="none"?"None":getVal("turret")==="aa"?"360° Fast":"360°"}
+  `;
 }
 
 function createTank() {
@@ -492,6 +684,46 @@ function createTank() {
   const a = armorAddonMods[getVal("armorAddon")];
   const m = materialMods[getVal("material")];
   const camo = getVal("camo");
+
   let armor = Math.round((c.armor + t.armor + a.armor) * m.armorMul);
   let speed = Math.max(5, Math.round(c.speed + t.speed + p.speed + e.speed + f.speed + a.speed));
-  let weight = ((c.weight + t.weight + p.weight + s1.weight + s2.weight + s
+  let weight = ((c.weight + t.weight + p.weight + s1.weight + s2.weight + s3.weight + a.weight) * m.weightMul).toFixed(1);
+  let cost = Math.round((c.cost + t.cost + p.cost + s1.cost + s2.cost + s3.cost + e.cost + f.cost + a.cost) * m.costMul);
+  let reliability = Math.max(0, Math.min(100, c.reliability + e.reliability + f.reliability));
+  let firepower = p.firepower + s1.firepower + s2.firepower + s3.firepower;
+  let range = Math.max(50, 300 - Math.floor(weight * 2));
+
+  let html = `
+    <h3>📋 TANK SPECIFICATION SHEET</h3><hr>
+    <b>Name:</b> ${c.name}<br>
+    <b>Chassis:</b> ${c.name}<br>
+    <b>Turret:</b> ${t.name}<br>
+    <b>Primary:</b> ${p.name}<br>
+    <b>Secondary 1:</b> ${s1.name}<br>
+    <b>Secondary 2:</b> ${s2.name}<br>
+    <b>Secondary 3:</b> ${s3.name}<br>
+    <b>Engine:</b> ${e.name}<br>
+    <b>Fuel:</b> ${f.name}<br>
+    <b>Armor Addon:</b> ${a.name}<br>
+    <b>Material:</b> ${m.name}<br>
+    <b>Camouflage:</b> ${camo}<br><hr>
+    <b>🛡️ Armor:</b> ${armor}<br>
+    <b>🚜 Speed:</b> ${speed} km/h<br>
+    <b>🔥 Firepower:</b> ${firepower}<br>
+    <b>🎯 Penetration:</b> ${p.pen}mm<br>
+    <b>⚖️ Weight:</b> ${weight} tons<br>
+    <b>🏭 Cost:</b> ${cost} points<br>
+    <b>🔧 Reliability:</b> ${reliability}%<br>
+    <b>⛽ Range:</b> ${range} km<br>
+    <b>🧭 Stability:</b> ${Math.max(20, 70 - Math.floor(weight/5))}%<br>
+    <b>🔥 Fire Chance:</b> ${getVal("fuel")==="gasoline"?"High":getVal("fuel")==="aviation"?"Very High":getVal("fuel")==="diesel"?"Low":"None"}<br>
+    <b>🔄 Turret:</b> ${getVal("turret")==="none"?"Fixed":"360°"}<br><hr>
+    <i>Built in WW2 Tank Workshop</i>
+  `;
+
+  document.getElementById("specContent").innerHTML = html;
+  document.getElementById("specSheet").style.display = "block";
+}
+</script>
+</body>
+</html>
