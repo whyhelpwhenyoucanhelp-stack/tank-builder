@@ -424,4 +424,373 @@ const allWeapons = {
     { id:"20pdr", name:"20-pdr (1944)", era:"1944", firepower:84, pen:180, weight:9, speed:-5, cost:130 }
   ],
   secondary: [
-    { id:"mg13", name:"MG13 (1930)", era:"1930", firepower:
+    { id:"mg13", name:"MG13 (1930)", era:"1930", firepower:6, weight:0.2, cost:10 },
+    { id:"mg34", name:"MG34 (1936)", era:"1936", firepower:8, weight:0.3, cost:15 },
+    { id:"dt_mg", name:"DT MG (1930)", era:"1930", firepower:7, weight:0.3, cost:12 },
+    { id:"bren", name:"Bren Gun (1936)", era:"1936", firepower:9, weight:0.4, cost:18 },
+    { id:"mg42", name:"MG42 (1940)", era:"1940", firepower:10, weight:0.4, cost:20 },
+    { id:"m1919", name:"M1919 Browning (1930)", era:"1930", firepower:8, weight:0.5, cost:14 },
+    { id:"m2hb", name:"M2HB .50cal (1939)", era:"1939", firepower:12, weight:0.6, cost:25 },
+    { id:"dshk", name:"DShK 12.7mm (1939)", era:"1939", firepower:13, weight:0.7, cost:28 },
+    { id:"type97_mg", name:"Type97 MG (1939)", era:"1939", firepower:9, weight:0.4, cost:19 },
+    { id:"flame_thrower", name:"Flame Thrower (1939)", era:"1939", firepower:25, weight:1.2, cost:40 },
+    { id:"browning_30cal", name:"Browning .30cal (1940)", era:"1940", firepower:9, weight:0.5, cost:17 },
+    { id:"mg15", name:"MG15 (1936)", era:"1936", firepower:7, weight:0.3, cost:13 },
+    { id:"type96_mg", name:"Type96 MG (1936)", era:"1936", firepower:8, weight:0.4, cost:16 },
+    { id:"besa_mg", name:"BESA MG (1939)", era:"1939", firepower:10, weight:0.5, cost:21 },
+    { id:"fiat_mg", name:"Fiat MG (1936)", era:"1936", firepower:7, weight:0.3, cost:14 },
+    { id:"zb53", name:"ZB-53 (1936)", era:"1936", firepower:9, weight:0.4, cost:17 },
+    { id:"sg43", name:"SG-43 (1940)", era:"1940", firepower:11, weight:0.6, cost:22 },
+    { id:"type99_mg", name:"Type99 MG (1940)", era:"1940", firepower:10, weight:0.5, cost:20 },
+    { id:"bazooka", name:"Bazooka (1940)", era:"1940", firepower:20, weight:0.8, cost:35 },
+    { id:"panzerschreck", name:"Panzerschreck (1944)", era:"1944", firepower:30, weight:1, cost:50 },
+    { id:"piat", name:"PIAT (1940)", era:"1940", firepower:22, weight:0.9, cost:38 },
+    { id:"smoke_launcher", name:"Smoke Launcher (1939)", era:"1939", firepower:0, weight:0.2, cost:10 },
+    { id:"at_rifle_boys", name:"Boys AT Rifle (1936)", era:"1936", firepower:15, weight:0.6, cost:30 },
+    { id:"at_rifle_ptrd", name:"PTRD-41 (1940)", era:"1940", firepower:18, weight:0.7, cost:32 },
+    { id:"light_mortar", name:"Light Mortar (1936)", era:"1936", firepower:20, weight:2, cost:35 },
+    { id:"heavy_mortar", name:"Heavy Mortar (1940)", era:"1940", firepower:28, weight:3, cost:45 },
+    { id:"rocket_pod", name:"Rocket Pod (1944)", era:"1944", firepower:35, weight:1.5, cost:60 },
+    { id:"panzerfaust_60", name:"Panzerfaust 60 (1944)", era:"1944", firepower:40, weight:1.3, cost:55 },
+    { id:"mg45", name:"MG45 (1944)", era:"1944", firepower:11, weight:0.4, cost:24 },
+    { id:"browning_m3", name:"Browning M3 (1944)", era:"1944", firepower:14, weight:0.7, cost:30 }
+  ]
+};
+
+const chassisStats = {
+  light:{speed:60,armor:15,weight:9,cost:80,reliability:80,name:"Light Tank (Pz II)"},
+  medium:{speed:45,armor:30,weight:25,cost:120,reliability:75,name:"Medium Tank (Pz IV)"},
+  heavy:{speed:35,armor:60,weight:55,cost:200,reliability:65,name:"Heavy Tank (Tiger I)"},
+  superheavy:{speed:20,armor:100,weight:188,cost:400,reliability:40,name:"Super Heavy (Maus)"},
+  td:{speed:40,armor:50,weight:24,cost:150,reliability:70,name:"Tank Destroyer (StuG)"},
+  spg:{speed:35,armor:15,weight:11,cost:100,reliability:60,name:"SPG (Wespe)"}
+};
+
+const turretMods = {
+  none:{weight:0,cost:0,armor:0,speed:0,name:"No Turret"},
+  light:{weight:2,cost:30,armor:5,speed:-2,name:"Light Turret"},
+  medium:{weight:5,cost:60,armor:10,speed:-5,name:"Medium Turret"},
+  heavy:{weight:10,cost:120,armor:20,speed:-8,name:"Heavy Turret"},
+  aa:{weight:3,cost:80,armor:3,speed:-3,name:"AA Turret"}
+};
+
+const engineMods = {
+  weak:{speed:0,reliability:5,cost:0,name:"Weak Gasoline"},
+  medium:{speed:8,reliability:10,cost:30,name:"Medium Diesel"},
+  strong:{speed:15,reliability:-5,cost:80,name:"Maybach Power"},
+  experimental:{speed:25,reliability:-20,cost:150,name:"Jet Fuel Experimental"}
+};
+
+const fuelMods = {
+  gasoline:{speed:2,reliability:-5,cost:0,name:"Gasoline"},
+  diesel:{speed:-2,reliability:15,cost:10,name:"Diesel"},
+  aviation:{speed:10,reliability:-15,cost:40,name:"Aviation Fuel"},
+  electric:{speed:-5,reliability:20,cost:60,name:"Electric Battery"}
+};
+
+const armorAddonMods = {
+  none:{armor:0,weight:0,speed:0,cost:0,name:"None"},
+  skirts:{armor:15,weight:3,speed:-3,cost:40,name:"Side Skirts"},
+  spaced:{armor:20,weight:5,speed:-5,cost:70,name:"Spaced Armor"},
+  cage:{armor:10,weight:2,speed:-1,cost:30,name:"Cage Armor"},
+  sandbags:{armor:8,weight:4,speed:-2,cost:5,name:"Sandbags"}
+};
+
+const materialMods = {
+  steel:{armorMul:1.0,weightMul:1.0,costMul:1.0,name:"Rolled Steel"},
+  cast:{armorMul:0.8,weightMul:1.3,costMul:0.6,name:"Cast Iron"},
+  alloy:{armorMul:1.2,weightMul:0.8,costMul:2.0,name:"Alloy Steel"},
+  composite:{armorMul:1.5,weightMul:1.1,costMul:3.0,name:"Composite Prototype"}
+};
+
+// ========== MUSIC (Total Overdose style) ==========
+const musicFrame = document.getElementById('bgMusic');
+musicFrame.src = "https://www.youtube.com/embed/HnVq7OG7NnQ?autoplay=1&loop=1&playlist=HnVq7OG7NnQ";
+let musicPlaying = true;
+document.getElementById('toggleMusic').addEventListener('click', () => {
+  musicPlaying = !musicPlaying;
+  musicFrame.src = musicPlaying ? "https://www.youtube.com/embed/HnVq7OG7NnQ?autoplay=1&loop=1&playlist=HnVq7OG7NnQ" : "";
+});
+
+// ========== POPULATE WEAPON LISTS BY ERA ==========
+function populateWeapons() {
+  const era = getVal("timePeriod");
+  const eras = ["1930"];
+  if (era >= "1936") eras.push("1936");
+  if (era >= "1939") eras.push("1939");
+  if (era >= "1940") eras.push("1940");
+  if (era >= "1944") eras.push("1944");
+
+  ['primaryWeapon', 'secondary1', 'secondary2', 'secondary3'].forEach((selectId, idx) => {
+    const select = document.getElementById(selectId);
+    select.innerHTML = '';
+    
+    if (idx === 0) {
+      allWeapons.primary.filter(w => eras.includes(w.era)).forEach(w => {
+        const opt = document.createElement('option');
+        opt.value = w.id;
+        opt.textContent = w.name;
+        select.appendChild(opt);
+      });
+    } else {
+      const noneOpt = document.createElement('option');
+      noneOpt.value = 'none';
+      noneOpt.textContent = 'None';
+      select.appendChild(noneOpt);
+      allWeapons.secondary.filter(w => eras.includes(w.era)).forEach(w => {
+        const opt = document.createElement('option');
+        opt.value = w.id;
+        opt.textContent = w.name;
+        select.appendChild(opt);
+      });
+    }
+  });
+}
+
+// ========== GET WEAPON DATA ==========
+const allMods = {};
+
+allWeapons.primary.forEach(w => { allMods[w.id] = w; });
+allWeapons.secondary.forEach(w => { allMods[w.id] = w; });
+
+// ========== START MENU ==========
+let currentSlide = 0;
+const slides = document.querySelectorAll('.menu-slide');
+const dots = document.querySelectorAll('.dot');
+const slider = document.getElementById('menuSlider');
+
+function goToSlide(i) {
+  currentSlide = i;
+  slider.style.transform = `translateX(-${i * 100}%)`;
+  slides.forEach((s, j) => s.classList.toggle('active', j === i));
+  dots.forEach((d, j) => d.classList.toggle('active', j === i));
+}
+
+document.getElementById('prevSlide').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentSlide > 0) goToSlide(currentSlide - 1);
+});
+document.getElementById('nextSlide').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentSlide < 2) goToSlide(currentSlide + 1);
+});
+dots.forEach(d => d.addEventListener('click', (e) => {
+  e.stopPropagation();
+  goToSlide(parseInt(d.dataset.index));
+}));
+
+let touchStartX = 0;
+document.getElementById('startMenu').addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+document.getElementById('startMenu').addEventListener('touchend', (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0 && currentSlide < 2) goToSlide(currentSlide + 1);
+    if (diff < 0 && currentSlide > 0) goToSlide(currentSlide - 1);
+  }
+});
+
+const pc = document.getElementById('particles');
+for (let i = 0; i < 50; i++) {
+  const p = document.createElement('div'); p.classList.add('particle');
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 4 + 's';
+  p.style.animationDuration = (3 + Math.random() * 5) + 's';
+  pc.appendChild(p);
+}
+
+document.getElementById('startButton').addEventListener('click', () => {
+  document.getElementById('startMenu').style.display = 'none';
+  document.getElementById('ui').style.display = 'block';
+});
+
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('startMenu').style.display !== 'none') {
+    if (e.key === 'ArrowRight' && currentSlide < 2) goToSlide(currentSlide + 1);
+    if (e.key === 'ArrowLeft' && currentSlide > 0) goToSlide(currentSlide - 1);
+  }
+});
+
+// ========== INIT 3D ==========
+init();
+populateWeapons();
+animate();
+updateAll();
+
+function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1a1a1a);
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 2, zoom);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.domElement.style.position = 'fixed';
+  renderer.domElement.style.top = '0';
+  renderer.domElement.style.left = '0';
+  renderer.domElement.style.zIndex = '1';
+  document.body.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 1.8));
+  const l1 = new THREE.DirectionalLight(0xffffff, 1.5); l1.position.set(5, 10, 5); scene.add(l1);
+  const l2 = new THREE.DirectionalLight(0xffaa88, 0.8); l2.position.set(-3, 2, -2); scene.add(l2);
+  scene.add(new THREE.GridHelper(10, 20, 0x333333, 0x222222));
+
+  const loader = new THREE.GLTFLoader();
+  loader.load(tankURL,
+    (gltf) => {
+      tank = gltf.scene;
+      const box = new THREE.Box3().setFromObject(tank);
+      const size = box.getSize(new THREE.Vector3());
+      const s = 4 / Math.max(size.x, size.y, size.z);
+      tank.scale.set(s, s, s);
+      tank.position.set(0, 0, 0);
+      scene.add(tank);
+    },
+    null,
+    () => {
+      const g = new THREE.Group();
+      const h = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.8, 4), new THREE.MeshStandardMaterial({ color: 0x4a5d23 }));
+      h.position.y = 0.5; g.add(h);
+      const t = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1, 0.6, 8), new THREE.MeshStandardMaterial({ color: 0x3a4d18 }));
+      t.position.set(0, 1.1, -0.3); g.add(t);
+      tank = g; scene.add(tank);
+    }
+  );
+
+  document.addEventListener("mousedown", (e) => { if (e.target === renderer.domElement || e.target.tagName === 'CANVAS') dragging = true; });
+  document.addEventListener("mouseup", () => dragging = false);
+  document.addEventListener("mousemove", (e) => {
+    if (dragging && tank) { rotY += (e.clientX - lastX) * 0.005; rotX += (e.clientY - lastY) * 0.005; }
+    lastX = e.clientX; lastY = e.clientY;
+  });
+
+  document.addEventListener("touchstart", (e) => {
+    if (e.target === renderer.domElement || e.target.tagName === 'CANVAS') { dragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; }
+  }, { passive: false });
+  document.addEventListener("touchend", () => dragging = false);
+  document.addEventListener("touchmove", (e) => {
+    if (dragging && tank) { rotY += (e.touches[0].clientX - lastX) * 0.005; rotX += (e.touches[0].clientY - lastY) * 0.005; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; }
+  }, { passive: false });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "PageUp") { zoom = Math.max(4, zoom - 1); camera.position.z = zoom; }
+    if (e.key === "PageDown") { zoom = Math.min(30, zoom + 1); camera.position.z = zoom; }
+  });
+
+  let pinchStart = 0;
+  document.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) pinchStart = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  });
+  document.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+      const pinchNow = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      zoom += (pinchStart - pinchNow) * 0.02; zoom = Math.max(4, Math.min(30, zoom)); camera.position.z = zoom; pinchStart = pinchNow;
+    }
+  });
+
+  window.addEventListener("resize", () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (tank) { tank.rotation.y = rotY; tank.rotation.x = rotX; }
+  renderer.render(scene, camera);
+}
+
+function getVal(id) { return document.getElementById(id).value; }
+
+function updateAll() {
+  populateWeapons();
+  
+  const c = chassisStats[getVal("chassis")];
+  const t = turretMods[getVal("turret")];
+  const p = allMods[getVal("primaryWeapon")] || {firepower:0,pen:0,weight:0,speed:0,cost:0,name:"None"};
+  const s1 = allMods[getVal("secondary1")] || {firepower:0,weight:0,cost:0,name:"None"};
+  const s2 = allMods[getVal("secondary2")] || {firepower:0,weight:0,cost:0,name:"None"};
+  const s3 = allMods[getVal("secondary3")] || {firepower:0,weight:0,cost:0,name:"None"};
+  const e = engineMods[getVal("engine")];
+  const f = fuelMods[getVal("fuel")];
+  const a = armorAddonMods[getVal("armorAddon")];
+  const m = materialMods[getVal("material")];
+
+  let armor = Math.round((c.armor + t.armor + a.armor) * m.armorMul);
+  let speed = Math.max(5, Math.round(c.speed + t.speed + (p.speed||0) + e.speed + f.speed + a.speed));
+  let weight = ((c.weight + t.weight + (p.weight||0) + (s1.weight||0) + (s2.weight||0) + (s3.weight||0) + a.weight) * m.weightMul).toFixed(1);
+  let cost = Math.round((c.cost + t.cost + (p.cost||0) + (s1.cost||0) + (s2.cost||0) + (s3.cost||0) + e.cost + f.cost + a.cost) * m.costMul);
+  let reliability = Math.max(0, Math.min(100, c.reliability + e.reliability + f.reliability));
+  let firepower = (p.firepower||0) + (s1.firepower||0) + (s2.firepower||0) + (s3.firepower||0);
+
+  document.getElementById("stats").innerHTML = `
+    🛡️ Armor: ${armor}<br>
+    🚜 Speed: ${speed} km/h<br>
+    🔥 Firepower: ${firepower}<br>
+    🎯 Penetration: ${p.pen||0}mm<br>
+    ⚖️ Weight: ${weight} tons<br>
+    🏭 Cost: ${cost} points<br>
+    🔧 Reliability: ${reliability}%
+  `;
+
+  document.getElementById("hoi4stats").innerHTML = `
+    🧭 Stability: ${Math.max(20, 70 - Math.floor(weight/5))}%<br>
+    ⛽ Range: ${Math.max(50, 300 - Math.floor(weight*2))} km<br>
+    🔥 Fire Chance: ${getVal("fuel")==="gasoline"?"High":getVal("fuel")==="aviation"?"Very High":getVal("fuel")==="diesel"?"Low":"None"}<br>
+    🎯 Accuracy: ${getVal("turret")==="none"?"Low (Fixed)":"Normal"}<br>
+    🔄 Turret: ${getVal("turret")==="none"?"None":getVal("turret")==="aa"?"360° Fast":"360°"}
+  `;
+}
+
+function createTank() {
+  const c = chassisStats[getVal("chassis")];
+  const t = turretMods[getVal("turret")];
+  const p = allMods[getVal("primaryWeapon")] || {firepower:0,pen:0,weight:0,speed:0,cost:0,name:"None"};
+  const s1 = allMods[getVal("secondary1")] || {firepower:0,weight:0,cost:0,name:"None"};
+  const s2 = allMods[getVal("secondary2")] || {firepower:0,weight:0,cost:0,name:"None"};
+  const s3 = allMods[getVal("secondary3")] || {firepower:0,weight:0,cost:0,name:"None"};
+  const e = engineMods[getVal("engine")];
+  const f = fuelMods[getVal("fuel")];
+  const a = armorAddonMods[getVal("armorAddon")];
+  const m = materialMods[getVal("material")];
+  const camo = getVal("camo");
+  const era = getVal("timePeriod");
+
+  let armor = Math.round((c.armor + t.armor + a.armor) * m.armorMul);
+  let speed = Math.max(5, Math.round(c.speed + t.speed + (p.speed||0) + e.speed + f.speed + a.speed));
+  let weight = ((c.weight + t.weight + (p.weight||0) + (s1.weight||0) + (s2.weight||0) + (s3.weight||0) + a.weight) * m.weightMul).toFixed(1);
+  let cost = Math.round((c.cost + t.cost + (p.cost||0) + (s1.cost||0) + (s2.cost||0) + (s3.cost||0) + e.cost + f.cost + a.cost) * m.costMul);
+  let reliability = Math.max(0, Math.min(100, c.reliability + e.reliability + f.reliability));
+  let firepower = (p.firepower||0) + (s1.firepower||0) + (s2.firepower||0) + (s3.firepower||0);
+  let range = Math.max(50, 300 - Math.floor(weight * 2));
+
+  let html = `
+    <h3>📋 TANK SPECIFICATION SHEET</h3><hr>
+    <b>Era:</b> ${era}<br>
+    <b>Chassis:</b> ${c.name}<br>
+    <b>Turret:</b> ${t.name}<br>
+    <b>Primary:</b> ${p.name}<br>
+    <b>Secondary 1:</b> ${s1.name}<br>
+    <b>Secondary 2:</b> ${s2.name}<br>
+    <b>Secondary 3:</b> ${s3.name}<br>
+    <b>Engine:</b> ${e.name}<br>
+    <b>Fuel:</b> ${f.name}<br>
+    <b>Armor Addon:</b> ${a.name}<br>
+    <b>Material:</b> ${m.name}<br>
+    <b>Camouflage:</b> ${camo}<br><hr>
+    <b>🛡️ Armor:</b> ${armor}<br>
+    <b>🚜 Speed:</b> ${speed} km/h<br>
+    <b>🔥 Firepower:</b> ${firepower}<br>
+    <b>🎯 Penetration:</b> ${p.pen||0}mm<br>
+    <b>⚖️ Weight:</b> ${weight} tons<br>
+    <b>🏭 Cost:</b> ${cost} points<br>
+    <b>🔧 Reliability:</b> ${reliability}%<br>
+    <b>⛽ Range:</b> ${range} km<br>
+    <b>🧭 Stability:</b> ${Math.max(20, 70 - Math.floor(weight/5))}%<br>
+    <b>🔥 Fire Chance:</b> ${getVal("fuel")==="gasoline"?"High":getVal("fuel")==="aviation"?"Very High":getVal("fuel")==="diesel"?"Low":"None"}<br>
+    <b>🔄 Turret:</b> ${getVal("turret")==="none"?"Fixed":"360°"}<br><hr>
+    <i>Built in WW2 Tank Workshop</i>
+  `;
+
+  document.getElementById("specContent").innerHTML = html;
+  document.getElementById("specSheet").style.display = "block";
+}
+</script>
+</body>
+</html>
