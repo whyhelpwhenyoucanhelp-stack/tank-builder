@@ -116,7 +116,7 @@ body {
   100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
 }
 
-/* ========== MAIN UI ========== */
+/* ========== MAIN UI - FIXED SCROLLING ========== */
 #ui {
   position: fixed; top: 10px; left: 10px;
   background: rgba(0,0,0,0.85); color: white;
@@ -124,14 +124,19 @@ body {
   border-radius: 10px; z-index: 10; display: none;
   border: 1px solid rgba(255,255,255,0.15);
   max-height: 95vh;
-  overflow-y: auto !important;
+  overflow-y: scroll !important;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  pointer-events: auto !important;
 }
 
-#ui::-webkit-scrollbar { width: 6px; }
-#ui::-webkit-scrollbar-track { background: transparent; }
-#ui::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+#ui * { pointer-events: auto !important; }
+
+#ui::-webkit-scrollbar { width: 8px; }
+#ui::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 4px; }
+#ui::-webkit-scrollbar-thumb { background: #666; border-radius: 4px; }
+#ui::-webkit-scrollbar-thumb:hover { background: #888; }
+
 #ui h2 { margin: 0 0 10px 0; font-size: clamp(13px, 2.5vw, 15px); letter-spacing: 1px; color: #ff6b6b; }
 
 select {
@@ -151,7 +156,7 @@ label {
 #hoi4stats { color: #ffcc00; }
 
 #createTank {
-  width: 100%; margin-top: 8px;
+  width: 100%; margin-top: 8px; margin-bottom: 20px;
   padding: 10px; font-size: clamp(12px, 2.5vw, 14px);
 }
 
@@ -164,9 +169,10 @@ label {
   max-height: 80vh; overflow-y: auto;
   border: 2px solid #e63946;
   -webkit-overflow-scrolling: touch;
+  pointer-events: auto;
 }
-#specSheet::-webkit-scrollbar { width: 4px; }
-#specSheet::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
+#specSheet::-webkit-scrollbar { width: 6px; }
+#specSheet::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
 #specContent { font-size: clamp(11px, 2vw, 13px); line-height: 1.6; }
 #specContent h3 { color: #ff6b6b; margin-bottom: 8px; font-size: clamp(14px, 3vw, 16px); }
 #specSheet button {
@@ -174,6 +180,12 @@ label {
   background: #b33a2e; color: white; border: none;
   border-radius: 4px; cursor: pointer; font-size: clamp(12px, 2.5vw, 14px);
   -webkit-tap-highlight-color: transparent;
+}
+
+/* ========== CANVAS ========== */
+canvas {
+  display: block;
+  pointer-events: auto;
 }
 
 @media (max-width: 600px) {
@@ -205,9 +217,9 @@ label {
         <h2>🛠️ TECH TREE & ERA</h2>
         <div class="controls-list">
           <div class="control-item"><span class="key-icon">⏳</span><span>Lock equipment by time period</span></div>
-          <div class="control-item"><span class="key-icon">🔧</span><span>1930 → 1940+ eras</span></div>
+          <div class="control-item"><span class="key-icon">🔧</span><span>1930 â†' 1940+ eras</span></div>
           <div class="control-item"><span class="key-icon">🚫</span><span>Later weapons hidden in early years</span></div>
-          <div class="control-item"><span class="key-icon">🎯</span><span>Over 100 new weapons to unlock</span></div>
+          <div class="control-item"><span class="key-icon">🎯</span><span>Over 100 weapons to unlock</span></div>
         </div>
       </div>
     </div>
@@ -222,11 +234,11 @@ label {
     </div>
   </div>
   <div class="nav-arrows">
-    <button class="nav-arrow left" id="prevSlide">◀</button>
+    <button class="nav-arrow left" id="prevSlide">â—€</button>
     <div class="slide-dots" id="slideDots">
       <span class="dot active" data-index="0"></span><span class="dot" data-index="1"></span><span class="dot" data-index="2"></span>
     </div>
-    <button class="nav-arrow right" id="nextSlide">▶</button>
+    <button class="nav-arrow right" id="nextSlide">â–¶</button>
   </div>
   <div class="particles" id="particles"></div>
 </div>
@@ -235,7 +247,7 @@ label {
 <div id="ui">
   <h2>🪖 WW2 TANK WORKSHOP</h2>
 
-  <label>⏳ TIME PERIOD</label>
+  <label>â³ TIME PERIOD</label>
   <select id="timePeriod" onchange="updateAll()">
     <option value="1930">1930 (Early Interwar)</option>
     <option value="1936">1936 (Pre-War)</option>
@@ -323,6 +335,7 @@ label {
   <div id="hoi4stats"></div>
   <hr>
   <button id="createTank" class="enter-btn" onclick="createTank()">📋 CREATE TANK</button>
+  <div style="height:20px;"></div>
 </div>
 
 <div id="specSheet" style="display:none;">
@@ -343,7 +356,6 @@ let dragging = false, lastX = 0, lastY = 0;
 // ========== 100+ WEAPONS WITH HISTORICAL ERAS ==========
 const allWeapons = {
   primary: [
-    // 1930 (Early Interwar)
     { id:"13mm_mg", name:"13mm MG (1930)", era:"1930", firepower:13, pen:10, weight:0.5, speed:0, cost:15 },
     { id:"20mm_breda", name:"20mm Breda (1930)", era:"1930", firepower:20, pen:20, weight:1, speed:0, cost:20 },
     { id:"25mm_hotchkiss", name:"25mm Hotchkiss (1930)", era:"1930", firepower:25, pen:30, weight:1.5, speed:0, cost:25 },
@@ -353,8 +365,6 @@ const allWeapons = {
     { id:"13mm_mg34", name:"13mm MG34 Early (1930)", era:"1930", firepower:15, pen:12, weight:0.6, speed:0, cost:18 },
     { id:"20mm_flak30", name:"20mm Flak30 (1930)", era:"1930", firepower:22, pen:22, weight:1.2, speed:0, cost:22 },
     { id:"37mm_pak36_early", name:"37mm Pak36 Early (1930)", era:"1930", firepower:35, pen:35, weight:2.2, speed:-1, cost:32 },
-    
-    // 1936 (Pre-War)
     { id:"37mm_pak36", name:"37mm Pak36 (1936)", era:"1936", firepower:37, pen:45, weight:2.5, speed:-1, cost:35 },
     { id:"45mm_20k", name:"45mm 20K (1936)", era:"1936", firepower:45, pen:50, weight:3, speed:-1, cost:40 },
     { id:"47mm_sa37", name:"47mm SA37 (1936)", era:"1936", firepower:47, pen:55, weight:3.5, speed:-1, cost:45 },
@@ -370,8 +380,6 @@ const allWeapons = {
     { id:"37mm_m3", name:"37mm M3 (1936)", era:"1936", firepower:36, pen:44, weight:2.4, speed:-1, cost:34 },
     { id:"20mm_madsen", name:"20mm Madsen (1936)", era:"1936", firepower:21, pen:23, weight:1.3, speed:0, cost:21 },
     { id:"13mm_breda_m31", name:"13mm Breda M31 (1936)", era:"1936", firepower:14, pen:14, weight:0.7, speed:0, cost:17 },
-    
-    // 1939 (Early War)
     { id:"75mm_kwk37", name:"75mm KwK37 (1939)", era:"1939", firepower:75, pen:70, weight:6, speed:-3, cost:75 },
     { id:"76mm_zis3", name:"76mm ZiS-3 (1939)", era:"1939", firepower:76, pen:75, weight:6.5, speed:-3, cost:80 },
     { id:"57mm_6pdr", name:"57mm 6-pdr (1939)", era:"1939", firepower:57, pen:90, weight:5, speed:-2, cost:60 },
@@ -386,8 +394,6 @@ const allWeapons = {
     { id:"25mm_type96_39", name:"25mm Type96 (1939)", era:"1939", firepower:27, pen:33, weight:1.7, speed:0, cost:27 },
     { id:"45mm_m1937", name:"45mm M1937 (1939)", era:"1939", firepower:46, pen:52, weight:3.1, speed:-1, cost:42 },
     { id:"75mm_m2", name:"75mm M2 (1939)", era:"1939", firepower:74, pen:72, weight:6.2, speed:-3, cost:76 },
-    
-    // 1940+ (Mid War)
     { id:"75mm_kwk40", name:"75mm KwK40 (1940)", era:"1940", firepower:75, pen:100, weight:7, speed:-4, cost:90 },
     { id:"76mm_m1", name:"76mm M1 (1940)", era:"1940", firepower:76, pen:105, weight:7, speed:-4, cost:92 },
     { id:"88mm_kwk36", name:"88mm KwK36 (1940)", era:"1940", firepower:88, pen:135, weight:10, speed:-5, cost:130 },
@@ -405,8 +411,6 @@ const allWeapons = {
     { id:"88mm_flak41", name:"88mm Flak41 (1940)", era:"1940", firepower:90, pen:160, weight:11, speed:-6, cost:150 },
     { id:"105mm_m4", name:"105mm M4 (1940)", era:"1940", firepower:106, pen:130, weight:14, speed:-6, cost:165 },
     { id:"122mm_a19", name:"122mm A-19 (1940)", era:"1940", firepower:124, pen:135, weight:17, speed:-8, cost:190 },
-    
-    // 1944+ (Late War)
     { id:"75mm_kwk42", name:"75mm KwK42 (1944)", era:"1944", firepower:75, pen:150, weight:7.5, speed:-3, cost:110 },
     { id:"88mm_kwk43", name:"88mm KwK43 (1944)", era:"1944", firepower:88, pen:185, weight:11, speed:-6, cost:160 },
     { id:"100mm_d10t", name:"100mm D-10T (1944)", era:"1944", firepower:100, pen:170, weight:12, speed:-6, cost:150 },
@@ -503,7 +507,7 @@ const materialMods = {
   composite:{armorMul:1.5,weightMul:1.1,costMul:3.0,name:"Composite Prototype"}
 };
 
-// ========== MUSIC (Total Overdose style) ==========
+// ========== MUSIC ==========
 const musicFrame = document.getElementById('bgMusic');
 musicFrame.src = "https://www.youtube.com/embed/HnVq7OG7NnQ?autoplay=1&loop=1&playlist=HnVq7OG7NnQ";
 let musicPlaying = true;
@@ -512,7 +516,7 @@ document.getElementById('toggleMusic').addEventListener('click', () => {
   musicFrame.src = musicPlaying ? "https://www.youtube.com/embed/HnVq7OG7NnQ?autoplay=1&loop=1&playlist=HnVq7OG7NnQ" : "";
 });
 
-// ========== POPULATE WEAPON LISTS BY ERA ==========
+// ========== POPULATE WEAPONS ==========
 function populateWeapons() {
   const era = getVal("timePeriod");
   const eras = ["1930"];
@@ -523,6 +527,7 @@ function populateWeapons() {
 
   ['primaryWeapon', 'secondary1', 'secondary2', 'secondary3'].forEach((selectId, idx) => {
     const select = document.getElementById(selectId);
+    const currentVal = select.value;
     select.innerHTML = '';
     
     if (idx === 0) {
@@ -530,26 +535,27 @@ function populateWeapons() {
         const opt = document.createElement('option');
         opt.value = w.id;
         opt.textContent = w.name;
+        if (w.id === currentVal) opt.selected = true;
         select.appendChild(opt);
       });
     } else {
       const noneOpt = document.createElement('option');
       noneOpt.value = 'none';
       noneOpt.textContent = 'None';
+      if ('none' === currentVal) noneOpt.selected = true;
       select.appendChild(noneOpt);
       allWeapons.secondary.filter(w => eras.includes(w.era)).forEach(w => {
         const opt = document.createElement('option');
         opt.value = w.id;
         opt.textContent = w.name;
+        if (w.id === currentVal) opt.selected = true;
         select.appendChild(opt);
       });
     }
   });
 }
 
-// ========== GET WEAPON DATA ==========
 const allMods = {};
-
 allWeapons.primary.forEach(w => { allMods[w.id] = w; });
 allWeapons.secondary.forEach(w => { allMods[w.id] = w; });
 
@@ -627,6 +633,7 @@ function init() {
   renderer.domElement.style.top = '0';
   renderer.domElement.style.left = '0';
   renderer.domElement.style.zIndex = '1';
+  renderer.domElement.style.pointerEvents = 'auto';
   document.body.appendChild(renderer.domElement);
 
   scene.add(new THREE.AmbientLight(0xffffff, 1.8));
@@ -656,19 +663,38 @@ function init() {
     }
   );
 
-  document.addEventListener("mousedown", (e) => { if (e.target === renderer.domElement || e.target.tagName === 'CANVAS') dragging = true; });
+  // Mouse rotation - only on canvas, NOT on UI
+  renderer.domElement.addEventListener("mousedown", (e) => {
+    dragging = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
   document.addEventListener("mouseup", () => dragging = false);
   document.addEventListener("mousemove", (e) => {
-    if (dragging && tank) { rotY += (e.clientX - lastX) * 0.005; rotX += (e.clientY - lastY) * 0.005; }
-    lastX = e.clientX; lastY = e.clientY;
+    if (dragging && tank) {
+      rotY += (e.clientX - lastX) * 0.005;
+      rotX += (e.clientY - lastY) * 0.005;
+      lastX = e.clientX;
+      lastY = e.clientY;
+    }
   });
 
-  document.addEventListener("touchstart", (e) => {
-    if (e.target === renderer.domElement || e.target.tagName === 'CANVAS') { dragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; }
+  // Touch rotation - only on canvas
+  renderer.domElement.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 1) {
+      dragging = true;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }
   }, { passive: false });
   document.addEventListener("touchend", () => dragging = false);
   document.addEventListener("touchmove", (e) => {
-    if (dragging && tank) { rotY += (e.touches[0].clientX - lastX) * 0.005; rotX += (e.touches[0].clientY - lastY) * 0.005; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; }
+    if (dragging && tank && e.touches.length === 1) {
+      rotY += (e.touches[0].clientX - lastX) * 0.005;
+      rotX += (e.touches[0].clientY - lastY) * 0.005;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }
   }, { passive: false });
 
   document.addEventListener("keydown", (e) => {
